@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galley</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f7f5f1;--bg2:#eeeae3;--bg3:#e4dfd6;
+  --ink:#17150f;--ink2:#3d3a32;--ink3:#7a7569;--ink4:#b0a99e;
+  --rule:#d4cfc5;--rule2:#c4beb2;
+  --accent:#2c4a48;--accent-l:#dde8e7;
+  --gold:#8a6d2a;--gold-l:#f2eadb;
+  --red:#7a2424;--red-l:#f0e4e4;
+  --serif:'Cormorant Garamond',serif;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Karla',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh;}
+.app{display:flex;flex-direction:column;min-height:100vh;}
+.topbar{background:var(--ink);color:#e8e2d8;display:flex;align-items:center;justify-content:space-between;padding:0 36px;height:52px;flex-shrink:0;}
+.brand-name{font-family:var(--serif);font-size:20px;font-weight:500;letter-spacing:0.01em;color:#f0ece4;}
+.nav-tabs{display:flex;align-items:stretch;height:100%;}
+.tab{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.55);padding:0 22px;cursor:pointer;display:flex;align-items:center;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;}
+.tab:hover{color:rgba(255,255,255,0.82);}
+.tab.active{color:#f0ece4;border-bottom-color:#d4b86a;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.topbar-ver{font-family:var(--mono);font-size:8px;color:rgba(255,255,255,0.22);letter-spacing:0.1em;}
+.tbar-link{font-family:var(--mono);font-size:9px;color:rgba(255,255,255,0.55);letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:color 0.15s;}
+.tbar-link:hover{color:rgba(255,255,255,0.82);}
+.key-status{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle;}
+.key-set{background:#6aaa7a;}.key-unset{background:#c87a6a;}
+.content{flex:1;padding:40px 36px;max-width:1100px;width:100%;}
+.panel{display:none;}.panel.active{display:block;}
+.phead{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:32px;padding-bottom:14px;border-bottom:1px solid var(--rule);}
+.ptitle{font-family:var(--serif);font-size:28px;font-weight:400;color:var(--ink);letter-spacing:-0.01em;}
+.pmeta{font-family:var(--mono);font-size:9px;color:var(--ink4);letter-spacing:0.08em;text-transform:uppercase;}
+.btn{font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;padding:8px 16px;border:1px solid var(--rule2);background:transparent;color:var(--ink2);cursor:pointer;transition:all 0.12s;}
+.btn:hover{background:var(--bg3);border-color:var(--ink3);}
+.btn-dark{background:var(--ink);color:#e8e2d8;border-color:var(--ink);}
+.btn-dark:hover{background:var(--ink2);border-color:var(--ink2);color:#f0ece4;}
+.btn-sm{padding:4px 10px;font-size:8px;}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:32px;}
+.stat{background:var(--bg);padding:18px 20px;}
+.stat-n{font-family:var(--serif);font-size:32px;font-weight:400;line-height:1;color:var(--ink);margin-bottom:6px;}
+.stat-l{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);}
+table{width:100%;border-collapse:collapse;}
+th{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);text-align:left;padding:9px 14px;border-bottom:1px solid var(--rule);font-weight:400;background:var(--bg);}
+td{padding:11px 14px;border-bottom:1px solid var(--bg2);font-size:13px;color:var(--ink2);vertical-align:top;}
+tr:hover td{background:var(--bg2);}
+tr:last-child td{border-bottom:none;}
+.st{font-family:var(--mono);font-size:8px;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;display:inline-block;}
+.st-review{background:var(--accent-l);color:var(--accent);}
+.st-rr{background:var(--gold-l);color:var(--gold);}
+.st-accepted{background:#ddeedd;color:#245a34;}
+.st-rejected{background:var(--red-l);color:var(--red);}
+.st-desk-rejected{background:#f5e8e8;color:#8a3030;}
+.st-withdrawn{background:var(--bg2);color:var(--ink4);}
+.st-draft{background:var(--bg2);color:var(--ink4);}
+.st-admin{background:#e8e0f0;color:#4a2a7a;}
+.st-noresponse{background:#e8e4d8;color:#5a5030;}
+.empty{padding:80px 20px;text-align:center;}
+.empty-t{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--ink3);margin-bottom:8px;}
+.empty-s{font-family:var(--mono);font-size:9px;color:var(--ink4);letter-spacing:0.08em;text-transform:uppercase;}
+.fl{font-family:var(--mono);font-size:8px;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:6px;}
+input[type=text],input[type=date],select,textarea{font-family:var(--sans);font-size:13px;padding:9px 12px;border:1px solid var(--rule);background:var(--bg);color:var(--ink);outline:none;width:100%;transition:border-color 0.12s;}
+input:focus,select:focus,textarea:focus{border-color:var(--ink3);background:#fff;}
+textarea{resize:vertical;min-height:100px;line-height:1.6;}
+select{cursor:pointer;}
+.field{margin-bottom:16px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:0 20px;}
+.overlay{position:fixed;inset:0;background:rgba(23,21,15,0.65);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.18s;}
+.overlay.open{opacity:1;pointer-events:all;}
+.modal{background:var(--bg);border:1px solid var(--rule2);padding:32px 36px;width:580px;max-width:95vw;max-height:88vh;overflow-y:auto;}
+.modal-t{font-family:var(--serif);font-size:22px;font-weight:400;margin-bottom:22px;padding-bottom:14px;border-bottom:1px solid var(--rule);}
+.mfoot{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:16px;border-top:1px solid var(--rule);}
+.atitle{font-weight:500;font-size:13px;color:var(--ink);}
+.ajournal{font-family:var(--mono);font-size:9px;color:var(--ink4);margin-top:3px;letter-spacing:0.04em;}
+.anotes{font-size:11px;color:var(--ink4);margin-top:3px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.sec-rule{font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink4);padding-bottom:8px;border-bottom:1px solid var(--bg3);margin:24px 0 12px;}
+.check-row{display:flex;align-items:flex-start;gap:12px;padding:9px 0;border-bottom:1px solid var(--bg2);}
+.check-row:last-child{border-bottom:none;}
+.cb{width:15px;height:15px;flex-shrink:0;border:1px solid var(--rule2);background:var(--bg);margin-top:2px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.12s;}
+.cb.on{background:var(--accent);border-color:var(--accent);}
+.cb-tick{color:#dde8e7;font-size:9px;display:none;}
+.cb.on .cb-tick{display:block;}
+.cl{font-size:13px;color:var(--ink2);flex:1;}
+.cl.done{text-decoration:line-through;color:var(--ink4);}
+.rhead{display:flex;align-items:center;gap:20px;padding:18px 22px;background:var(--bg2);border:1px solid var(--rule);margin-bottom:28px;}
+.rscore{font-family:var(--serif);font-size:42px;font-weight:400;line-height:1;color:var(--ink);}
+.rsublabel{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:0.1em;color:var(--ink4);margin-top:4px;}
+.pbar{height:3px;background:var(--bg3);flex:1;margin-top:4px;}
+.pbar-fill{height:100%;background:var(--accent);transition:width 0.25s;}
+.log-e{padding:14px 18px;margin-bottom:1px;background:var(--bg);border:1px solid var(--rule);border-left:3px solid var(--rule2);transition:border-left-color 0.15s;}
+.log-e:hover{border-left-color:var(--accent);}
+.log-m{font-family:var(--mono);font-size:9px;color:var(--ink4);margin-bottom:4px;letter-spacing:0.04em;}
+.log-v{font-family:var(--mono);font-size:9px;color:var(--accent);margin-bottom:6px;}
+.log-n{font-size:13px;color:var(--ink2);line-height:1.6;}
+.hist-e{padding:14px 18px;margin-bottom:1px;background:var(--bg);border:1px solid var(--rule);border-left:3px solid var(--rule2);transition:border-left-color 0.15s;}
+.hist-e:hover{border-left-color:var(--accent);}
+.hist-journal{font-weight:500;font-size:13px;color:var(--ink);}
+.hist-meta{font-family:var(--mono);font-size:9px;color:var(--ink4);margin-top:4px;}
+.hist-notes{font-size:12px;color:var(--ink3);margin-top:6px;line-height:1.6;}
+.audit-in{background:var(--bg);border:1px solid var(--rule);margin-bottom:16px;}
+#audit-text{border:none;background:transparent;padding:16px 18px;min-height:160px;font-size:13px;line-height:1.8;resize:vertical;width:100%;}
+#audit-text:focus{outline:none;}
+.audit-bar{display:flex;align-items:center;gap:12px;padding:10px 18px;border-top:1px solid var(--rule);background:var(--bg2);}
+.audit-out{border:1px solid var(--rule);background:var(--bg);padding:24px;min-height:160px;font-size:13px;line-height:1.8;}
+.f-block{border-left:3px solid var(--gold);background:var(--gold-l);padding:12px 16px;margin:12px 0;}
+.f-type{font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:5px;}
+.f-q{font-style:italic;font-size:12px;color:var(--ink2);margin-bottom:4px;}
+.f-why{font-size:12px;color:var(--ink);margin-bottom:3px;}
+.f-fix{font-size:12px;color:var(--ink3);}
+.clean-out{border-left:3px solid var(--accent);background:var(--accent-l);padding:12px 16px;font-family:var(--mono);font-size:10px;color:var(--accent);}
+.think{font-family:var(--mono);font-size:10px;color:var(--ink4);padding:24px;text-align:center;animation:pl 1.4s ease-in-out infinite;}
+@keyframes pl{0%,100%{opacity:0.3}50%{opacity:1}}
+.notice{font-family:var(--mono);font-size:9px;color:var(--ink3);padding:10px 14px;background:var(--bg2);border-left:2px solid var(--rule2);margin-bottom:24px;letter-spacing:0.02em;line-height:1.6;}
+.about-section-title{font-family:var(--serif);font-size:16px;font-weight:500;color:var(--ink);margin-bottom:6px;margin-top:22px;}
+.about-body{font-size:13px;color:var(--ink2);line-height:1.75;}
+.about-intro{font-size:14px;color:var(--ink2);line-height:1.75;padding-bottom:20px;border-bottom:1px solid var(--rule);}
+.about-note{font-family:var(--mono);font-size:10px;color:var(--ink3);line-height:1.7;padding:14px 16px;background:var(--bg2);border-left:2px solid var(--rule2);margin-top:22px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand-name">Galley</div>
+    <div class="nav-tabs">
+      <div class="tab active" onclick="showPanel('tracker')">Submissions</div>
+      <div class="tab" onclick="showPanel('readiness')">Readiness</div>
+      <div class="tab" onclick="showPanel('revisions')">Revisions</div>
+      <div class="tab" onclick="showPanel('auditor')">Style audit</div>
+    </div>
+    <div class="topbar-right">
+      <span class="tbar-link" onclick="openM('settings-modal')"><span class="key-status key-unset" id="key-indicator"></span>API key</span>
+      <span class="tbar-link" onclick="openM('about-modal')">About</span>
+      <span class="topbar-ver">v1.0</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="panel active" id="panel-tracker">
+      <div class="phead">
+        <div class="ptitle">Submissions</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="pmeta" id="tracker-count">0 articles</span>
+          <button class="btn" onclick="importData()" title="Import a Galley backup file">Import</button>
+          <button class="btn" onclick="exportData()" title="Export all data as a backup file">Export</button>
+          <button class="btn btn-dark" onclick="openM('add-modal')">+ New article</button>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="stat-n" id="s-review">0</div><div class="stat-l">Under review</div></div>
+        <div class="stat"><div class="stat-n" id="s-rr">0</div><div class="stat-l">Revise &amp; resubmit</div></div>
+        <div class="stat"><div class="stat-n" id="s-accepted">0</div><div class="stat-l">Accepted</div></div>
+        <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Active pipeline</div></div>
+      </div>
+      <div id="tbl-wrap">
+        <table id="sub-table">
+          <thead>
+            <tr>
+              <th>Article</th><th>Status</th><th>Ver.</th>
+              <th>Submitted</th><th>Days in</th><th>Next target</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="sub-body"></tbody>
+        </table>
+        <div class="empty" id="t-empty">
+          <div class="empty-t">No submissions yet</div>
+          <div class="empty-s">Add your first article to begin tracking</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-readiness">
+      <div class="phead">
+        <div class="ptitle">Readiness check</div>
+        <span class="pmeta">Pre-submission checklist</span>
+      </div>
+      <div class="notice">Select an article and citation style. Check items as you confirm them. State is stored per article per style.</div>
+      <div class="fg2" style="margin-bottom:24px;">
+        <div class="field">
+          <label class="fl">Article</label>
+          <select id="r-article" onchange="loadR()"><option value="">— select article —</option></select>
+        </div>
+        <div class="field">
+          <label class="fl">Citation style</label>
+          <select id="r-style" onchange="loadR()">
+            <option value="chicago">Chicago author-date</option>
+            <option value="apa">APA 7th</option>
+            <option value="mla">MLA 9th</option>
+            <option value="harvard">Harvard</option>
+            <option value="vancouver">Vancouver</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="fl">Authorship</label>
+          <select id="r-authorship" onchange="loadR()">
+            <option value="sole">Sole-authored</option>
+            <option value="co">Co-authored</option>
+          </select>
+        </div>
+      </div>
+      <div id="r-content">
+        <div class="empty"><div class="empty-t">Select an article</div><div class="empty-s">Checklist loads per article</div></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-revisions">
+      <div class="phead">
+        <div class="ptitle">Revision log</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <span class="pmeta">Version history</span>
+          <button class="btn btn-dark" onclick="openM('log-modal')">+ Add entry</button>
+        </div>
+      </div>
+      <div class="field" style="max-width:320px;margin-bottom:28px;">
+        <label class="fl">Filter by article</label>
+        <select id="log-filter" onchange="renderLog()"><option value="">All articles</option></select>
+      </div>
+      <div id="log-list">
+        <div class="empty"><div class="empty-t">No entries yet</div><div class="empty-s">Add your first revision entry</div></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-auditor">
+      <div class="phead">
+        <div class="ptitle">Style audit</div>
+        <span class="pmeta">AI-tell detection</span>
+      </div>
+      <div class="notice">Paste a passage. The auditor checks for triadic padding, manufactured binary contrast, anaphoric stacking, escalating gravity, thesis restatement at close, and hedging clusters. Each flag returns a diagnosis and a fix principle.</div>
+      <div class="audit-in">
+        <textarea id="audit-text" placeholder="Paste your passage here…"></textarea>
+        <div class="audit-bar">
+          <button class="btn btn-dark" onclick="runAudit()">Run audit</button>
+          <button class="btn" onclick="clearAudit()">Clear</button>
+          <span class="pmeta" id="wc"></span>
+        </div>
+      </div>
+      <div id="audit-out" style="display:none;" class="audit-out"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="overlay" id="add-modal">
+  <div class="modal">
+    <div class="modal-t">New article</div>
+    <div class="field"><label class="fl">Article title</label><input type="text" id="f-title" placeholder="Full title"></div>
+    <div class="fg2">
+      <div class="field"><label class="fl">Journal</label><input type="text" id="f-journal" placeholder="Journal name"></div>
+      <div class="field"><label class="fl">Publishing house</label><input type="text" id="f-publisher" placeholder="e.g. Taylor &amp; Francis"></div>
+      <div class="field"><label class="fl">Submission platform</label><input type="text" id="f-platform" placeholder="e.g. ScholarOne"></div>
+      <div class="field"><label class="fl">Status</label>
+        <select id="f-status">
+          <option value="draft">Draft</option><option value="admin">With administrator</option>
+          <option value="review">Under review</option><option value="rr">R&amp;R</option>
+          <option value="accepted">Accepted</option><option value="rejected">Rejected</option>
+          <option value="desk-rejected">Desk rejected</option><option value="noresponse">No response</option>
+          <option value="withdrawn">Withdrawn</option>
+        </select>
+      </div>
+      <div class="field"><label class="fl">Date submitted</label><input type="date" id="f-date"></div>
+      <div class="field"><label class="fl">Date published</label><input type="date" id="f-pubdate"></div>
+      <div class="field"><label class="fl">Version</label><input type="text" id="f-version" placeholder="e.g. v15"></div>
+      <div class="field"><label class="fl">Word count</label><input type="text" id="f-wc" placeholder="e.g. 6300"></div>
+      <div class="field"><label class="fl">Next target (if rejected)</label><input type="text" id="f-next" placeholder="e.g. JVAP"></div>
+    </div>
+    <div class="field"><label class="fl">Notes</label><textarea id="f-notes" style="min-height:70px;" placeholder="Context, editor comments…"></textarea></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('add-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveArticle()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="overlay" id="edit-modal">
+  <div class="modal">
+    <div class="modal-t">Edit article</div>
+    <input type="hidden" id="ef-id">
+    <div class="field"><label class="fl">Article title</label><input type="text" id="ef-title"></div>
+    <div class="fg2">
+      <div class="field"><label class="fl">Journal</label><input type="text" id="ef-journal"></div>
+      <div class="field"><label class="fl">Publishing house</label><input type="text" id="ef-publisher"></div>
+      <div class="field"><label class="fl">Submission platform</label><input type="text" id="ef-platform"></div>
+      <div class="field"><label class="fl">Status</label>
+        <select id="ef-status">
+          <option value="draft">Draft</option><option value="admin">With administrator</option>
+          <option value="review">Under review</option><option value="rr">R&amp;R</option>
+          <option value="accepted">Accepted</option><option value="rejected">Rejected</option>
+          <option value="desk-rejected">Desk rejected</option><option value="noresponse">No response</option>
+          <option value="withdrawn">Withdrawn</option>
+        </select>
+      </div>
+      <div class="field"><label class="fl">Date submitted</label><input type="date" id="ef-date"></div>
+      <div class="field"><label class="fl">Date published</label><input type="date" id="ef-pubdate"></div>
+      <div class="field"><label class="fl">Version</label><input type="text" id="ef-version"></div>
+      <div class="field"><label class="fl">Word count</label><input type="text" id="ef-wc"></div>
+      <div class="field"><label class="fl">Next target</label><input type="text" id="ef-next"></div>
+    </div>
+    <div class="field"><label class="fl">Notes</label><textarea id="ef-notes" style="min-height:70px;"></textarea></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('edit-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="updateArticle()">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY MODAL -->
+<div class="overlay" id="history-modal">
+  <div class="modal" style="width:640px;">
+    <div class="modal-t" id="history-modal-title">Submission history</div>
+    <div class="notice" style="margin-bottom:20px;">Full submission chain for this article. Each entry is a separate submission attempt with its own outcome.</div>
+    <div id="history-list"></div>
+    <div class="mfoot">
+      <button class="btn" onclick="openAddHistory()">+ Add submission record</button>
+      <button class="btn btn-dark" onclick="closeM('history-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD HISTORY ENTRY MODAL -->
+<div class="overlay" id="hist-add-modal">
+  <div class="modal">
+    <div class="modal-t">Add submission record</div>
+    <input type="hidden" id="hf-artid">
+    <div class="fg2">
+      <div class="field"><label class="fl">Journal</label><input type="text" id="hf-journal" placeholder="Journal submitted to"></div>
+      <div class="field"><label class="fl">Publisher</label><input type="text" id="hf-publisher" placeholder="e.g. Taylor &amp; Francis"></div>
+      <div class="field"><label class="fl">Date submitted</label><input type="date" id="hf-date-sub"></div>
+      <div class="field"><label class="fl">Date of response</label><input type="date" id="hf-date-resp"></div>
+      <div class="field" style="grid-column:1/-1"><label class="fl">Outcome</label>
+        <select id="hf-outcome">
+          <option value="under-review">Under review</option>
+          <option value="desk-rejected">Desk rejected</option>
+          <option value="rejected">Rejected</option>
+          <option value="rr">Revise &amp; resubmit</option>
+          <option value="accepted">Accepted</option>
+          <option value="withdrawn">Withdrawn</option>
+          <option value="noresponse">No response</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label class="fl">Notes</label><textarea id="hf-notes" style="min-height:70px;" placeholder="Reviewer comments, desk-reject reason, context…"></textarea></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('hist-add-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveHistEntry()">Save record</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="overlay" id="settings-modal">
+  <div class="modal" style="width:520px;">
+    <div class="modal-t">API key</div>
+    <div class="notice" style="margin-bottom:20px;">Galley uses the Anthropic API for the style auditor. You need your own API key — get one free at <strong>console.anthropic.com</strong>. Your key is stored locally in your browser and never transmitted anywhere except directly to Anthropic when you run an audit. Typical cost per audit is under $0.02.</div>
+    <div class="field">
+      <label class="fl">Anthropic API key</label>
+      <input type="text" id="settings-key" placeholder="sk-ant-api03-..." style="font-family:var(--mono);font-size:11px;">
+    </div>
+    <div id="key-feedback" style="font-family:var(--mono);font-size:9px;margin-top:-8px;margin-bottom:12px;min-height:16px;"></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('settings-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveKey()">Save key</button>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="overlay" id="about-modal">
+  <div class="modal" style="width:620px;">
+    <div class="modal-t">About Galley</div>
+    <p class="about-intro"><strong>Galley</strong> is a browser-based toolkit for academic writers managing active submission pipelines. Everything runs locally — no login, no server, no data leaving your machine.</p>
+    <div class="about-section-title">Submissions</div>
+    <p class="about-body">Your pipeline in one place. Add each article you're working on or have submitted, record the journal, version, submission date, and current status. The dashboard shows how many pieces are under review, at R&amp;R, and in your active pipeline at any given moment. Each article carries a full submission history — the complete rejection chain from first submission to final outcome.</p>
+    <div class="about-section-title">Readiness</div>
+    <p class="about-body">A pre-submission checklist that runs per article per citation style. Select an article and the style the journal requires — Chicago, APA, MLA, Harvard, or Vancouver — and work through document preparation, reference formatting, layout, ethics and compliance, and cover letter requirements. Don't submit until it reads 100%.</p>
+    <div class="about-section-title">Revisions</div>
+    <p class="about-body">A version log attached to each article. Each time you revise, add an entry: version number, date, and what changed. Over time this becomes a reliable record of how a manuscript developed from first draft to submission.</p>
+    <div class="about-section-title">Style audit</div>
+    <p class="about-body">Paste a passage and the auditor analyses it for structural patterns that signal formulaic writing: triadic padding, manufactured binary contrast, anaphoric stacking, escalating gravity, thesis restatement at close, hedging clusters. Each flagged sentence returns with the pattern identified, the phrase quoted, a diagnosis, and a fix principle. Use it at the late-draft stage, not the first.</p>
+    <div class="about-note">Everything is stored in your browser's local storage. Nothing is transmitted except the text you submit to the style auditor, which is processed via the Anthropic API and immediately discarded. Clearing your browser data will erase your records — export or back up periodically.</div>
+    <div class="mfoot">
+      <button class="btn btn-dark" onclick="closeM('about-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOG MODAL -->
+<div class="overlay" id="log-modal">
+  <div class="modal">
+    <div class="modal-t">Revision entry</div>
+    <div class="field"><label class="fl">Article</label><select id="lf-article"><option value="">— select —</option></select></div>
+    <div class="fg2">
+      <div class="field"><label class="fl">Version</label><input type="text" id="lf-version" placeholder="e.g. v16"></div>
+      <div class="field"><label class="fl">Date</label><input type="date" id="lf-date"></div>
+    </div>
+    <div class="field"><label class="fl">What changed</label><textarea id="lf-notes" placeholder="Summary of revisions…"></textarea></div>
+    <div class="mfoot">
+      <button class="btn" onclick="closeM('log-modal')">Cancel</button>
+      <button class="btn btn-dark" onclick="saveLog()">Save entry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let articles=JSON.parse(localStorage.getItem('gly_articles')||'[]');
+let logs=JSON.parse(localStorage.getItem('gly_logs')||'[]');
+let rState=JSON.parse(localStorage.getItem('gly_readiness')||'{}');
+// Migrate: ensure all articles have submissions array
+articles=articles.map(a=>({submissions:[],...a}));
+
+function getKey(){return localStorage.getItem('gly_apikey')||'';}
+function saveKey(){
+  const k=document.getElementById('settings-key').value.trim();
+  if(!k){document.getElementById('key-feedback').style.color='var(--red)';document.getElementById('key-feedback').textContent='Please paste your API key.';return;}
+  if(!k.startsWith('sk-ant-')){document.getElementById('key-feedback').style.color='var(--red)';document.getElementById('key-feedback').textContent='Key should start with sk-ant- — check you copied it fully.';return;}
+  localStorage.setItem('gly_apikey',k);updateKeyIndicator();
+  document.getElementById('key-feedback').style.color='var(--accent)';
+  document.getElementById('key-feedback').textContent='Key saved.';
+  setTimeout(()=>closeM('settings-modal'),800);
+}
+function updateKeyIndicator(){
+  document.getElementById('key-indicator').className='key-status '+(getKey()?'key-set':'key-unset');
+}
+function persist(){
+  localStorage.setItem('gly_articles',JSON.stringify(articles));
+  localStorage.setItem('gly_logs',JSON.stringify(logs));
+  localStorage.setItem('gly_readiness',JSON.stringify(rState));
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  const map={tracker:0,readiness:1,revisions:2,auditor:3};
+  document.querySelectorAll('.tab')[map[id]].classList.add('active');
+  if(id==='readiness')popRSel();
+  if(id==='revisions')popLogSels();
+}
+function closeM(id){document.getElementById(id).classList.remove('open');}
+function openM(id){
+  if(id==='log-modal')popLogModal();
+  if(id==='settings-modal'){
+    const k=getKey();
+    document.getElementById('settings-key').value=k||'';
+    document.getElementById('key-feedback').textContent=k?'Key is set. Paste a new one to replace it.':'';
+    document.getElementById('key-feedback').style.color='var(--ink3)';
+  }
+  document.getElementById(id).classList.add('open');
+}
+document.querySelectorAll('.overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
+
+const SM={draft:'Draft',admin:'With administrator',review:'Under review',rr:'R&R',accepted:'Accepted',rejected:'Rejected','desk-rejected':'Desk rejected',noresponse:'No response',withdrawn:'Withdrawn'};
+const SC={draft:'st-draft',admin:'st-admin',review:'st-review',rr:'st-rr',accepted:'st-accepted',rejected:'st-rejected','desk-rejected':'st-desk-rejected',noresponse:'st-noresponse',withdrawn:'st-withdrawn'};
+const OM={'under-review':'Under review','desk-rejected':'Desk rejected','rejected':'Rejected','rr':'R&R','accepted':'Accepted','withdrawn':'Withdrawn','noresponse':'No response'};
+const OC={'under-review':'st-review','desk-rejected':'st-desk-rejected','rejected':'st-rejected','rr':'st-rr','accepted':'st-accepted','withdrawn':'st-withdrawn','noresponse':'st-noresponse'};
+
+function days(d){if(!d)return'—';return Math.floor((Date.now()-new Date(d))/86400000)+'d';}
+
+function renderTracker(){
+  const tbody=document.getElementById('sub-body');
+  const empty=document.getElementById('t-empty');
+  document.getElementById('tracker-count').textContent=articles.length+' article'+(articles.length!==1?'s':'');
+  empty.style.display=articles.length?'none':'block';
+  document.querySelector('#sub-table thead').style.display=articles.length?'':'none';
+  document.getElementById('s-review').textContent=articles.filter(a=>a.status==='review').length;
+  document.getElementById('s-rr').textContent=articles.filter(a=>a.status==='rr').length;
+  document.getElementById('s-accepted').textContent=articles.filter(a=>a.status==='accepted').length;
+  document.getElementById('s-total').textContent=articles.filter(a=>!['rejected','withdrawn','desk-rejected','noresponse'].includes(a.status)).length;
+  tbody.innerHTML=[...articles].sort((a,b)=>{
+    if(!a.date&&!b.date)return 0;if(!a.date)return 1;if(!b.date)return -1;
+    return a.date.localeCompare(b.date);
+  }).map(a=>`<tr>
+    <td style="max-width:220px;">
+      <div class="atitle" title="${a.title}">${a.title}</div>
+      <div class="ajournal">${a.journal||'—'}</div>
+      ${(a.publisher||a.platform)?`<div style="font-family:var(--mono);font-size:9px;color:var(--ink4);margin-top:2px;">${[a.publisher,a.platform].filter(Boolean).join(' · ')}</div>`:''}
+      ${a.notes?`<div class="anotes" title="${a.notes}">${a.notes}</div>`:''}
+    </td>
+    <td><span class="st ${SC[a.status]||'st-draft'}">${SM[a.status]||a.status}</span></td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--ink4);">${a.version||'—'}</td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--ink4);">
+      ${a.date||'—'}
+      ${a.pubdate?`<div style="color:var(--accent);margin-top:2px;" title="Published">${a.pubdate}</div>`:''}
+    </td>
+    <td style="font-family:var(--mono);font-size:10px;color:var(--ink4);">${days(a.date)}</td>
+    <td style="font-size:12px;color:var(--ink3);">${a.next||'—'}</td>
+    <td>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="btn btn-sm" onclick="openHistory('${a.id}')">History${a.submissions&&a.submissions.length?` (${a.submissions.length})`:''}</button>
+        <button class="btn btn-sm" onclick="editA('${a.id}')">Edit</button>
+        <button class="btn btn-sm" style="color:var(--red);" onclick="delA('${a.id}')">Del</button>
+      </div>
+    </td>
+  </tr>`).join('');
+}
+
+function saveArticle(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){alert('Title required.');return;}
+  articles.push({id:uid(),title,submissions:[],
+    journal:document.getElementById('f-journal').value.trim(),
+    publisher:document.getElementById('f-publisher').value.trim(),
+    platform:document.getElementById('f-platform').value.trim(),
+    status:document.getElementById('f-status').value,
+    date:document.getElementById('f-date').value,
+    pubdate:document.getElementById('f-pubdate').value,
+    version:document.getElementById('f-version').value.trim(),
+    wordcount:document.getElementById('f-wc').value.trim(),
+    next:document.getElementById('f-next').value.trim(),
+    notes:document.getElementById('f-notes').value.trim()
+  });
+  persist();renderTracker();closeM('add-modal');
+  ['f-title','f-journal','f-publisher','f-platform','f-version','f-wc','f-next','f-notes'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('f-date').value='';document.getElementById('f-pubdate').value='';document.getElementById('f-status').value='draft';
+}
+function editA(id){
+  const a=articles.find(x=>x.id===id);if(!a)return;
+  document.getElementById('ef-id').value=id;
+  document.getElementById('ef-title').value=a.title;
+  document.getElementById('ef-journal').value=a.journal||'';
+  document.getElementById('ef-publisher').value=a.publisher||'';
+  document.getElementById('ef-platform').value=a.platform||'';
+  document.getElementById('ef-status').value=a.status;
+  document.getElementById('ef-date').value=a.date||'';
+  document.getElementById('ef-pubdate').value=a.pubdate||'';
+  document.getElementById('ef-version').value=a.version||'';
+  document.getElementById('ef-wc').value=a.wordcount||'';
+  document.getElementById('ef-next').value=a.next||'';
+  document.getElementById('ef-notes').value=a.notes||'';
+  openM('edit-modal');
+}
+function updateArticle(){
+  const id=document.getElementById('ef-id').value;
+  const idx=articles.findIndex(a=>a.id===id);if(idx===-1)return;
+  articles[idx]={...articles[idx],
+    title:document.getElementById('ef-title').value.trim(),
+    journal:document.getElementById('ef-journal').value.trim(),
+    publisher:document.getElementById('ef-publisher').value.trim(),
+    platform:document.getElementById('ef-platform').value.trim(),
+    status:document.getElementById('ef-status').value,
+    date:document.getElementById('ef-date').value,
+    pubdate:document.getElementById('ef-pubdate').value,
+    version:document.getElementById('ef-version').value.trim(),
+    wordcount:document.getElementById('ef-wc').value.trim(),
+    next:document.getElementById('ef-next').value.trim(),
+    notes:document.getElementById('ef-notes').value.trim()
+  };
+  persist();renderTracker();closeM('edit-modal');
+}
+function delA(id){if(!confirm('Delete this article?'))return;articles=articles.filter(a=>a.id!==id);persist();renderTracker();}
+
+// SUBMISSION HISTORY
+let currentHistArticleId=null;
+function openHistory(artId){
+  currentHistArticleId=artId;
+  const a=articles.find(x=>x.id===artId);if(!a)return;
+  document.getElementById('history-modal-title').textContent=a.title.length>50?a.title.slice(0,50)+'…':a.title;
+  renderHistoryList(a);
+  document.getElementById('history-modal').classList.add('open');
+}
+function renderHistoryList(a){
+  const c=document.getElementById('history-list');
+  const subs=a.submissions||[];
+  if(!subs.length){
+    c.innerHTML='<div class="empty" style="padding:40px 0;"><div class="empty-t">No submission records</div><div class="empty-s">Add the first record below</div></div>';
+    return;
+  }
+  const sorted=[...subs].sort((x,y)=>(x.dateSub||'').localeCompare(y.dateSub||''));
+  c.innerHTML=sorted.map(s=>`
+    <div class="hist-e">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+        <div>
+          <div class="hist-journal">${s.journal||'—'}</div>
+          ${s.publisher?`<div style="font-family:var(--mono);font-size:9px;color:var(--ink4);margin-top:2px;">${s.publisher}</div>`:''}
+        </div>
+        <span class="st ${OC[s.outcome]||'st-draft'}" style="flex-shrink:0;">${OM[s.outcome]||s.outcome}</span>
+      </div>
+      <div class="hist-meta">Submitted: ${s.dateSub||'—'}${s.dateResp?' · Response: '+s.dateResp:''}</div>
+      ${s.notes?`<div class="hist-notes">${s.notes}</div>`:''}
+      <button onclick="delHistEntry('${a.id}','${s.id}')" style="background:none;border:none;font-family:var(--mono);font-size:8px;color:var(--red);cursor:pointer;margin-top:8px;letter-spacing:0.06em;text-transform:uppercase;">Delete</button>
+    </div>`).join('');
+}
+function openAddHistory(){
+  const a=articles.find(x=>x.id===currentHistArticleId);
+  document.getElementById('hf-artid').value=currentHistArticleId;
+  document.getElementById('hf-journal').value=a?a.journal||'':'';
+  document.getElementById('hf-publisher').value=a?a.publisher||'':'';
+  document.getElementById('hf-date-sub').value='';
+  document.getElementById('hf-date-resp').value='';
+  document.getElementById('hf-outcome').value='under-review';
+  document.getElementById('hf-notes').value='';
+  document.getElementById('hist-add-modal').classList.add('open');
+}
+function saveHistEntry(){
+  const artId=document.getElementById('hf-artid').value;
+  const idx=articles.findIndex(a=>a.id===artId);if(idx===-1)return;
+  const entry={
+    id:uid(),
+    journal:document.getElementById('hf-journal').value.trim(),
+    publisher:document.getElementById('hf-publisher').value.trim(),
+    dateSub:document.getElementById('hf-date-sub').value,
+    dateResp:document.getElementById('hf-date-resp').value,
+    outcome:document.getElementById('hf-outcome').value,
+    notes:document.getElementById('hf-notes').value.trim()
+  };
+  if(!articles[idx].submissions)articles[idx].submissions=[];
+  articles[idx].submissions.push(entry);
+  // Auto-sync article status from latest outcome
+  const outcomeToStatus={'under-review':'review','desk-rejected':'desk-rejected','rejected':'rejected','rr':'rr','accepted':'accepted','withdrawn':'withdrawn','noresponse':'noresponse'};
+  if(outcomeToStatus[entry.outcome])articles[idx].status=outcomeToStatus[entry.outcome];
+  persist();renderHistoryList(articles[idx]);renderTracker();
+  closeM('hist-add-modal');
+}
+function delHistEntry(artId,entryId){
+  if(!confirm('Delete this record?'))return;
+  const idx=articles.findIndex(a=>a.id===artId);if(idx===-1)return;
+  articles[idx].submissions=articles[idx].submissions.filter(s=>s.id!==entryId);
+  persist();renderHistoryList(articles[idx]);renderTracker();
+}
+
+// CHECKLISTS
+const ETHICS={cat:'Ethics & compliance',items:[
+  'Ethical approval statement included or confirmed not applicable',
+  'AI use disclosed in accordance with journal policy',
+  'Data availability statement included or confirmed not applicable',
+  'Funding declaration complete and accurate',
+  'Conflicts of interest declared or confirmed none exist',
+  'Author contribution statement included (co-authored work)'
+]};
+
+const CL={
+  chicago:[
+    {cat:'Document',items:[
+      'Anonymised version prepared — author name, institution, acknowledgements removed',
+      'Document metadata checked — author name removed from file properties',
+      'Self-citations rendered as Author (Year) in anonymous version',
+      'File named per journal instructions, no author name in filename',
+      'Word count confirmed within stated limit',
+      'Abstract within stated word limit',
+      'Keywords supplied in correct number'
+    ]},
+    {cat:'References',items:[
+      'All in-text citations in Chicago author-date format',
+      'Reference list alphabetical by author surname',
+      'All references complete — no missing page numbers or DOIs',
+      'DOIs formatted as https://doi.org/ where available',
+      'No discrepancy between in-text citations and reference list'
+    ]},
+    {cat:'Formatting',items:[
+      'Font and size per journal guidelines','Line spacing per guidelines',
+      'Page numbers included if required','Headings formatted per style guide',
+      'Tables and figures captioned and numbered'
+    ]},
+    ETHICS,
+    {cat:'Cover letter',items:[
+      'Article title stated','Word count declared',
+      'Confirmation of sole or co-authorship',
+      'Manuscript not under review elsewhere',
+      'Suggested reviewers if required by journal',
+      'Conflicts of interest declared'
+    ]}
+  ],
+  apa:[
+    {cat:'Document',items:[
+      'Anonymised version prepared',
+      'Document metadata checked — author name removed from file properties',
+      'Running head formatted correctly','Abstract 150–250 words with keywords below',
+      'Word count confirmed'
+    ]},
+    {cat:'References',items:[
+      'All citations APA 7th format','DOIs as hyperlinks where available',
+      'et al. usage correct — 3+ authors on first citation',
+      'Reference list double-spaced with hanging indent'
+    ]},
+    {cat:'Formatting',items:[
+      '12pt Times New Roman or 11pt Calibri','Double-spaced throughout',
+      '1-inch margins all sides','Heading levels 1–5 formatted correctly'
+    ]},
+    ETHICS,
+    {cat:'Cover letter',items:[
+      'Title and running head stated','Word count declared',
+      'Sole or co-authorship confirmed','Not under review elsewhere',
+      'Data availability statement if required'
+    ]}
+  ],
+  mla:[
+    {cat:'Document',items:[
+      'Anonymised version prepared',
+      'Document metadata checked — author name removed from file properties',
+      'Header with page numbers top-right','Title centred, not bold or italicised',
+      'Word count confirmed'
+    ]},
+    {cat:'References',items:[
+      'Works Cited page — not Bibliography','MLA 9th format throughout',
+      'Hanging indent applied','No URLs unless DOI unavailable'
+    ]},
+    {cat:'Formatting',items:[
+      'Double-spaced throughout','1-inch margins',
+      'Last name + page number header','Block quotes over 4 lines indented 1 inch'
+    ]},
+    ETHICS,
+    {cat:'Cover letter',items:[
+      'Article title stated','Word count declared',
+      'Not under review elsewhere','Bio note if required by journal'
+    ]}
+  ],
+  harvard:[
+    {cat:'Document',items:[
+      'Anonymised version prepared',
+      'Document metadata checked — author name removed from file properties',
+      'Word count confirmed within limit','Abstract within stated limit'
+    ]},
+    {cat:'References',items:[
+      'Author (Year) in-text format throughout',
+      'Reference list alphabetical by surname',
+      'No discrepancy between in-text and list','Journal names given in full'
+    ]},
+    {cat:'Formatting',items:[
+      'Font and size per guidelines','Line spacing per guidelines','Headings formatted correctly'
+    ]},
+    ETHICS,
+    {cat:'Cover letter',items:[
+      'Title stated clearly','Word count declared',
+      'Not under review elsewhere','Conflicts of interest declared'
+    ]}
+  ],
+  vancouver:[
+    {cat:'Document',items:[
+      'Anonymised version prepared',
+      'Document metadata checked — author name removed from file properties',
+      'Word count within limit','Structured abstract — Background, Methods, Results, Conclusions'
+    ]},
+    {cat:'References',items:[
+      'Numbered in order of first appearance','Vancouver format throughout',
+      'Journal abbreviations correct per NLM style','All references complete'
+    ]},
+    {cat:'Formatting',items:[
+      'Double-spaced throughout','Figures as separate files if required',
+      'Tables on separate pages if required'
+    ]},
+    ETHICS,
+    {cat:'Cover letter',items:[
+      'Title and brief statement of significance','Word count declared',
+      'Not under review elsewhere','Ethical approval number if applicable',
+      'All authors confirmed'
+    ]}
+  ]
+};
+
+const COAUTH={cat:'Co-authorship',items:[
+  'All co-authors have read and approved the final submitted version',
+  'Author order agreed by all co-authors',
+  'Corresponding author designated and confirmed',
+  'All co-authors\' institutional affiliations confirmed and correctly listed',
+  'All co-authors\' ORCID iDs included where required',
+  'Any co-author conflicts of interest declared individually',
+  'Co-author contact details available if editors request them'
+]};
+
+function popRSel(){
+  const sel=document.getElementById('r-article');const cur=sel.value;
+  sel.innerHTML='<option value="">— select article —</option>';
+  articles.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.title;sel.appendChild(o);});
+  if(cur)sel.value=cur;
+}
+function loadR(){
+  const artId=document.getElementById('r-article').value;
+  const style=document.getElementById('r-style').value;
+  const authorship=document.getElementById('r-authorship').value;
+  const c=document.getElementById('r-content');
+  if(!artId){c.innerHTML='<div class="empty"><div class="empty-t">Select an article</div></div>';return;}
+  const key=artId+'_'+style+'_'+authorship;
+  if(!rState[key])rState[key]={};
+  const baseCL=CL[style];
+  // Insert co-authorship category after Ethics & compliance if co-authored
+  const cl=authorship==='co'?[...baseCL,COAUTH]:baseCL;
+  let total=0,checked=0;
+  cl.forEach(cat=>cat.items.forEach((item,i)=>{total++;if(rState[key][cat.cat+'_'+i])checked++;}));
+  const pct=total?Math.round((checked/total)*100):0;
+  let html=`<div class="rhead">
+    <div><div class="rscore">${pct}%</div><div class="rsublabel">Ready</div></div>
+    <div style="flex:1;"><div style="font-size:12px;color:var(--ink3);margin-bottom:6px;">${checked} of ${total} items confirmed</div><div class="pbar"><div class="pbar-fill" style="width:${pct}%"></div></div></div>
+  </div>`;
+  cl.forEach(cat=>{
+    html+=`<div class="sec-rule">${cat.cat}</div>`;
+    cat.items.forEach((item,i)=>{
+      const on=rState[key][cat.cat+'_'+i]?'on':'';
+      html+=`<div class="check-row"><div class="cb ${on}" onclick="toggleCk('${key}','${cat.cat}',${i})"><span class="cb-tick">✓</span></div><div class="cl ${on?'done':''}">${item}</div></div>`;
+    });
+  });
+  c.innerHTML=html;
+}
+function toggleCk(key,cat,i){
+  if(!rState[key])rState[key]={};
+  rState[key][cat+'_'+i]=!rState[key][cat+'_'+i];
+  persist();loadR();
+}
+
+function popLogSels(){
+  const sel=document.getElementById('log-filter');const cur=sel.value;
+  sel.innerHTML='<option value="">All articles</option>';
+  articles.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.title;sel.appendChild(o);});
+  if(cur)sel.value=cur;renderLog();
+}
+function popLogModal(){
+  const sel=document.getElementById('lf-article');
+  sel.innerHTML='<option value="">— select —</option>';
+  articles.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.title;sel.appendChild(o);});
+}
+function saveLog(){
+  const artId=document.getElementById('lf-article').value;
+  const notes=document.getElementById('lf-notes').value.trim();
+  if(!artId||!notes){alert('Select an article and add notes.');return;}
+  logs.push({id:uid(),artId,version:document.getElementById('lf-version').value.trim(),date:document.getElementById('lf-date').value,notes});
+  persist();renderLog();closeM('log-modal');
+  document.getElementById('lf-version').value='';document.getElementById('lf-date').value='';document.getElementById('lf-notes').value='';
+}
+function renderLog(){
+  const c=document.getElementById('log-list');
+  const f=document.getElementById('log-filter').value;
+  const filtered=f?logs.filter(l=>l.artId===f):logs;
+  const sorted=[...filtered].sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  if(!sorted.length){c.innerHTML='<div class="empty"><div class="empty-t">No entries</div><div class="empty-s">Add your first revision entry</div></div>';return;}
+  c.innerHTML=sorted.map(l=>{
+    const art=articles.find(a=>a.id===l.artId);
+    return`<div class="log-e">
+      <div class="log-m">${art?art.title:'Unknown'} · ${l.date||'no date'}</div>
+      ${l.version?`<div class="log-v">${l.version}</div>`:''}
+      <div class="log-n">${l.notes}</div>
+      <button onclick="delLog('${l.id}')" style="background:none;border:none;font-family:var(--mono);font-size:8px;color:var(--red);cursor:pointer;margin-top:8px;letter-spacing:0.06em;text-transform:uppercase;">Delete</button>
+    </div>`;
+  }).join('');
+}
+function delLog(id){if(!confirm('Delete this entry?'))return;logs=logs.filter(l=>l.id!==id);persist();renderLog();}
+
+document.getElementById('audit-text').addEventListener('input',function(){
+  const w=this.value.trim()?this.value.trim().split(/\s+/).length:0;
+  document.getElementById('wc').textContent=w?w+' words':'';
+});
+
+async function runAudit(){
+  const text=document.getElementById('audit-text').value.trim();
+  if(!text){alert('Paste some text first.');return;}
+  const key=getKey();
+  if(!key){
+    const out=document.getElementById('audit-out');
+    out.style.display='block';
+    out.innerHTML='<div style="border-left:3px solid var(--red);background:var(--red-l);padding:12px 16px;font-family:var(--mono);font-size:10px;color:var(--red);">No API key set. Click <strong>API key</strong> in the top bar to add yours. Get a free key at console.anthropic.com.</div>';
+    return;
+  }
+  const out=document.getElementById('audit-out');
+  out.style.display='block';out.innerHTML='<div class="think">Auditing passage…</div>';
+  const sys=`You are a rigorous prose auditor. Analyse the submitted text for AI-tell rhythmic constructions. Detect and flag these patterns:
+1. TRIADIC PADDING — Three-item lists used as rhetorical filler. Test: can the list be reduced without losing meaning?
+2. BINARY MANUFACTURING — "Not X but Y", "both X and Y", "at once X and Y" where the contrast is invented rather than genuine.
+3. ANAPHORIC STACKING — Repeated sentence openings for rhetorical effect rather than earned emphasis.
+4. ESCALATING GRAVITY — Sentences that ratchet up in weight without adding new content.
+5. THESIS RESTATEMENT — Closing sentences that repeat the argument with added solemnity.
+6. NOT ONLY BUT ALSO — And its variants. Almost always padding.
+7. HEDGING CLUSTERS — Multiple epistemic hedges in one sentence.
+For each instance output exactly:
+FLAG: [pattern name]
+QUOTE: [exact phrase or sentence]
+WHY: [one-sentence diagnosis]
+FIX: [one-sentence principle or suggested revision]
+If the passage is clean, say so in one plain sentence. End with a 2-3 sentence overall assessment.`;
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,system:sys,messages:[{role:'user',content:`Audit this passage:\n\n${text}`}]})
+    });
+    const data=await r.json();
+    const raw=data.content?.[0]?.text||'No response.';
+    out.innerHTML=fmtAudit(raw);
+  }catch(e){out.innerHTML=`<div style="color:var(--red);font-family:var(--mono);font-size:10px;">Error: ${e.message}</div>`;}
+}
+function fmtAudit(raw){
+  const lines=raw.split('\n');let html='';let buf={};
+  function flush(){
+    if(!buf.type)return;
+    html+=`<div class="f-block"><div class="f-type">${buf.type}</div>${buf.quote?`<div class="f-q">"${buf.quote}"</div>`:''}${buf.why?`<div class="f-why"><strong>Why:</strong> ${buf.why}</div>`:''}${buf.fix?`<div class="f-fix"><strong>Fix:</strong> ${buf.fix}</div>`:''}</div>`;
+    buf={};
+  }
+  let rest=[];let inF=false;
+  lines.forEach(line=>{
+    const l=line.trim();
+    if(l.startsWith('FLAG:')){flush();inF=true;buf.type=l.replace('FLAG:','').trim();}
+    else if(l.startsWith('QUOTE:')&&inF)buf.quote=l.replace('QUOTE:','').trim().replace(/^"|"$/g,'');
+    else if(l.startsWith('WHY:')&&inF)buf.why=l.replace('WHY:','').trim();
+    else if(l.startsWith('FIX:')&&inF)buf.fix=l.replace('FIX:','').trim();
+    else if(l&&inF&&!['FLAG:','QUOTE:','WHY:','FIX:'].some(p=>l.startsWith(p))){flush();inF=false;if(l)rest.push(l);}
+    else if(l&&!inF)rest.push(l);
+  });
+  flush();
+  if(rest.length){const combined=rest.join(' ').trim();const isClean=combined.toLowerCase().includes('clean')||combined.toLowerCase().includes('no flag')||combined.toLowerCase().includes('no instance');html+=isClean?`<div class="clean-out">${combined}</div>`:`<p style="margin-top:16px;font-size:13px;color:var(--ink2);line-height:1.7;">${combined}</p>`;}
+  return html||'<div class="clean-out">No flags raised.</div>';
+}
+function clearAudit(){
+  document.getElementById('audit-text').value='';
+  document.getElementById('audit-out').style.display='none';
+  document.getElementById('wc').textContent='';
+}
+
+function exportData(){
+  const payload={version:'1.0',exported:new Date().toISOString(),articles,logs,rState};
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='galley-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+function importData(){
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(!data.articles||!Array.isArray(data.articles)){alert('Invalid backup file — no articles array found.');return;}
+        if(!confirm(`This will replace your current data with the backup from ${data.exported?data.exported.slice(0,10):'unknown date'}. Continue?`))return;
+        articles=data.articles.map(a=>({submissions:[],...a}));
+        logs=data.logs||[];
+        rState=data.rState||{};
+        persist();renderTracker();
+        alert('Data imported successfully.');
+      }catch(err){alert('Could not read file — make sure it is a valid Galley backup.');}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+renderTracker();
+document.querySelector('#sub-table thead').style.display='none';
+updateKeyIndicator();
+</script>
+</body>
+</html>
