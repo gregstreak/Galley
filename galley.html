@@ -56,12 +56,16 @@ tr:last-child td{border-bottom:none;}
 .st-review{background:var(--accent-l);color:var(--accent);}
 .st-rr{background:var(--gold-l);color:var(--gold);}
 .st-accepted{background:#ddeedd;color:#245a34;}
+.st-production{background:#e0eed8;color:#3a5a28;}
+.st-published{background:#c8ddc8;color:#1a3a1a;}
 .st-rejected{background:var(--red-l);color:var(--red);}
 .st-desk-rejected{background:#f5e8e8;color:#8a3030;}
 .st-withdrawn{background:var(--bg2);color:var(--ink4);}
 .st-draft{background:var(--bg2);color:var(--ink4);}
 .st-admin{background:#e8e0f0;color:#4a2a7a;}
 .st-noresponse{background:#e8e4d8;color:#5a5030;}
+.st-commissioned{background:#e0ddf0;color:#3a2a6a;}
+.st-pitch{background:#f0f0e0;color:#4a4a20;}
 .empty{padding:80px 20px;text-align:center;}
 .empty-t{font-family:var(--serif);font-size:22px;font-weight:400;color:var(--ink3);margin-bottom:8px;}
 .empty-s{font-family:var(--mono);font-size:9px;color:var(--ink4);letter-spacing:0.08em;text-transform:uppercase;}
@@ -156,7 +160,7 @@ select{cursor:pointer;}
       <div class="stats">
         <div class="stat"><div class="stat-n" id="s-review">0</div><div class="stat-l">Under review</div></div>
         <div class="stat"><div class="stat-n" id="s-rr">0</div><div class="stat-l">Revise &amp; resubmit</div></div>
-        <div class="stat"><div class="stat-n" id="s-accepted">0</div><div class="stat-l">Accepted</div></div>
+        <div class="stat"><div class="stat-n" id="s-accepted">0</div><div class="stat-l">Accepted / Published</div></div>
         <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Active pipeline</div></div>
       </div>
       <div id="tbl-wrap">
@@ -251,17 +255,35 @@ select{cursor:pointer;}
 <div class="overlay" id="add-modal">
   <div class="modal">
     <div class="modal-t">New article</div>
-    <div class="field"><label class="fl">Article title</label><input type="text" id="f-title" placeholder="Full title"></div>
+    <div class="fg2" style="margin-bottom:0;">
+      <div class="field">
+        <label class="fl">Content type</label>
+        <select id="f-type">
+          <option value="article">Journal article</option>
+          <option value="pitch">Pitch / Op-Ed / Essay</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label class="fl">Title</label><input type="text" id="f-title" placeholder="Full title or working title"></div>
     <div class="fg2">
-      <div class="field"><label class="fl">Journal</label><input type="text" id="f-journal" placeholder="Journal name"></div>
+      <div class="field"><label class="fl">Journal / Publication</label><input type="text" id="f-journal" placeholder="Journal or outlet name"></div>
       <div class="field"><label class="fl">Publishing house</label><input type="text" id="f-publisher" placeholder="e.g. Taylor &amp; Francis"></div>
       <div class="field"><label class="fl">Submission platform</label><input type="text" id="f-platform" placeholder="e.g. ScholarOne"></div>
       <div class="field"><label class="fl">Status</label>
         <select id="f-status">
-          <option value="draft">Draft</option><option value="admin">With administrator</option>
-          <option value="review">Under review</option><option value="rr">R&amp;R</option>
-          <option value="accepted">Accepted</option><option value="rejected">Rejected</option>
-          <option value="desk-rejected">Desk rejected</option><option value="noresponse">No response</option>
+          <option value="draft">Draft</option>
+          <option value="pitched">Pitched</option>
+          <option value="admin">With administrator</option>
+          <option value="review">Under review</option>
+          <option value="rr">R&amp;R</option>
+          <option value="accepted">Accepted</option>
+          <option value="production">In production</option>
+          <option value="published">Published</option>
+          <option value="commissioned">Commissioned</option>
+          <option value="rejected">Rejected</option>
+          <option value="desk-rejected">Desk rejected</option>
+          <option value="not-commissioned">Not commissioned</option>
+          <option value="noresponse">No response</option>
           <option value="withdrawn">Withdrawn</option>
         </select>
       </div>
@@ -284,17 +306,35 @@ select{cursor:pointer;}
   <div class="modal">
     <div class="modal-t">Edit article</div>
     <input type="hidden" id="ef-id">
-    <div class="field"><label class="fl">Article title</label><input type="text" id="ef-title"></div>
+    <div class="fg2" style="margin-bottom:0;">
+      <div class="field">
+        <label class="fl">Content type</label>
+        <select id="ef-type">
+          <option value="article">Journal article</option>
+          <option value="pitch">Pitch / Op-Ed / Essay</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label class="fl">Title</label><input type="text" id="ef-title"></div>
     <div class="fg2">
-      <div class="field"><label class="fl">Journal</label><input type="text" id="ef-journal"></div>
+      <div class="field"><label class="fl">Journal / Publication</label><input type="text" id="ef-journal"></div>
       <div class="field"><label class="fl">Publishing house</label><input type="text" id="ef-publisher"></div>
       <div class="field"><label class="fl">Submission platform</label><input type="text" id="ef-platform"></div>
       <div class="field"><label class="fl">Status</label>
         <select id="ef-status">
-          <option value="draft">Draft</option><option value="admin">With administrator</option>
-          <option value="review">Under review</option><option value="rr">R&amp;R</option>
-          <option value="accepted">Accepted</option><option value="rejected">Rejected</option>
-          <option value="desk-rejected">Desk rejected</option><option value="noresponse">No response</option>
+          <option value="draft">Draft</option>
+          <option value="pitched">Pitched</option>
+          <option value="admin">With administrator</option>
+          <option value="review">Under review</option>
+          <option value="rr">R&amp;R</option>
+          <option value="accepted">Accepted</option>
+          <option value="production">In production</option>
+          <option value="published">Published</option>
+          <option value="commissioned">Commissioned</option>
+          <option value="rejected">Rejected</option>
+          <option value="desk-rejected">Desk rejected</option>
+          <option value="not-commissioned">Not commissioned</option>
+          <option value="noresponse">No response</option>
           <option value="withdrawn">Withdrawn</option>
         </select>
       </div>
@@ -342,6 +382,10 @@ select{cursor:pointer;}
           <option value="rejected">Rejected</option>
           <option value="rr">Revise &amp; resubmit</option>
           <option value="accepted">Accepted</option>
+          <option value="production">In production</option>
+          <option value="published">Published</option>
+          <option value="commissioned">Commissioned</option>
+          <option value="not-commissioned">Not commissioned</option>
           <option value="withdrawn">Withdrawn</option>
           <option value="noresponse">No response</option>
         </select>
@@ -457,10 +501,10 @@ function openM(id){
 }
 document.querySelectorAll('.overlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open');});});
 
-const SM={draft:'Draft',admin:'With administrator',review:'Under review',rr:'R&R',accepted:'Accepted',rejected:'Rejected','desk-rejected':'Desk rejected',noresponse:'No response',withdrawn:'Withdrawn'};
-const SC={draft:'st-draft',admin:'st-admin',review:'st-review',rr:'st-rr',accepted:'st-accepted',rejected:'st-rejected','desk-rejected':'st-desk-rejected',noresponse:'st-noresponse',withdrawn:'st-withdrawn'};
-const OM={'under-review':'Under review','desk-rejected':'Desk rejected','rejected':'Rejected','rr':'R&R','accepted':'Accepted','withdrawn':'Withdrawn','noresponse':'No response'};
-const OC={'under-review':'st-review','desk-rejected':'st-desk-rejected','rejected':'st-rejected','rr':'st-rr','accepted':'st-accepted','withdrawn':'st-withdrawn','noresponse':'st-noresponse'};
+const SM={draft:'Draft',admin:'With administrator',review:'Under review',rr:'R&R',accepted:'Accepted',production:'In production',published:'Published',rejected:'Rejected','desk-rejected':'Desk rejected',noresponse:'No response',withdrawn:'Withdrawn',pitched:'Pitched',commissioned:'Commissioned','not-commissioned':'Not commissioned'};
+const SC={draft:'st-draft',admin:'st-admin',review:'st-review',rr:'st-rr',accepted:'st-accepted',production:'st-production',published:'st-published',rejected:'st-rejected','desk-rejected':'st-desk-rejected',noresponse:'st-noresponse',withdrawn:'st-withdrawn',pitched:'st-pitch',commissioned:'st-commissioned','not-commissioned':'st-rejected'};
+const OM={'under-review':'Under review','desk-rejected':'Desk rejected','rejected':'Rejected','rr':'R&R','accepted':'Accepted','production':'In production','published':'Published','withdrawn':'Withdrawn','noresponse':'No response','commissioned':'Commissioned','not-commissioned':'Not commissioned'};
+const OC={'under-review':'st-review','desk-rejected':'st-desk-rejected','rejected':'st-rejected','rr':'st-rr','accepted':'st-accepted','production':'st-production','published':'st-published','withdrawn':'st-withdrawn','noresponse':'st-noresponse','commissioned':'st-commissioned','not-commissioned':'st-rejected'};
 
 function days(d){if(!d)return'—';return Math.floor((Date.now()-new Date(d))/86400000)+'d';}
 
@@ -472,13 +516,14 @@ function renderTracker(){
   document.querySelector('#sub-table thead').style.display=articles.length?'':'none';
   document.getElementById('s-review').textContent=articles.filter(a=>a.status==='review').length;
   document.getElementById('s-rr').textContent=articles.filter(a=>a.status==='rr').length;
-  document.getElementById('s-accepted').textContent=articles.filter(a=>a.status==='accepted').length;
-  document.getElementById('s-total').textContent=articles.filter(a=>!['rejected','withdrawn','desk-rejected','noresponse'].includes(a.status)).length;
+  document.getElementById('s-accepted').textContent=articles.filter(a=>['accepted','production','published'].includes(a.status)).length;
+  document.getElementById('s-total').textContent=articles.filter(a=>!['rejected','withdrawn','desk-rejected','noresponse','not-commissioned'].includes(a.status)).length;
   tbody.innerHTML=[...articles].sort((a,b)=>{
     if(!a.date&&!b.date)return 0;if(!a.date)return 1;if(!b.date)return -1;
     return a.date.localeCompare(b.date);
   }).map(a=>`<tr>
     <td style="max-width:220px;">
+      ${a.type==='pitch'?`<div style="font-family:var(--mono);font-size:7px;color:var(--ink4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:3px;">Pitch / Op-Ed</div>`:''}
       <div class="atitle" title="${a.title}">${a.title}</div>
       <div class="ajournal">${a.journal||'—'}</div>
       ${(a.publisher||a.platform)?`<div style="font-family:var(--mono);font-size:9px;color:var(--ink4);margin-top:2px;">${[a.publisher,a.platform].filter(Boolean).join(' · ')}</div>`:''}
@@ -506,6 +551,7 @@ function saveArticle(){
   const title=document.getElementById('f-title').value.trim();
   if(!title){alert('Title required.');return;}
   articles.push({id:uid(),title,submissions:[],
+    type:document.getElementById('f-type').value,
     journal:document.getElementById('f-journal').value.trim(),
     publisher:document.getElementById('f-publisher').value.trim(),
     platform:document.getElementById('f-platform').value.trim(),
@@ -524,6 +570,7 @@ function saveArticle(){
 function editA(id){
   const a=articles.find(x=>x.id===id);if(!a)return;
   document.getElementById('ef-id').value=id;
+  document.getElementById('ef-type').value=a.type||'article';
   document.getElementById('ef-title').value=a.title;
   document.getElementById('ef-journal').value=a.journal||'';
   document.getElementById('ef-publisher').value=a.publisher||'';
@@ -541,6 +588,7 @@ function updateArticle(){
   const id=document.getElementById('ef-id').value;
   const idx=articles.findIndex(a=>a.id===id);if(idx===-1)return;
   articles[idx]={...articles[idx],
+    type:document.getElementById('ef-type').value,
     title:document.getElementById('ef-title').value.trim(),
     journal:document.getElementById('ef-journal').value.trim(),
     publisher:document.getElementById('ef-publisher').value.trim(),
@@ -614,7 +662,7 @@ function saveHistEntry(){
   if(!articles[idx].submissions)articles[idx].submissions=[];
   articles[idx].submissions.push(entry);
   // Auto-sync article status from latest outcome
-  const outcomeToStatus={'under-review':'review','desk-rejected':'desk-rejected','rejected':'rejected','rr':'rr','accepted':'accepted','withdrawn':'withdrawn','noresponse':'noresponse'};
+  const outcomeToStatus={'under-review':'review','desk-rejected':'desk-rejected','rejected':'rejected','rr':'rr','accepted':'accepted','production':'production','published':'published','commissioned':'commissioned','not-commissioned':'not-commissioned','withdrawn':'withdrawn','noresponse':'noresponse'};
   if(outcomeToStatus[entry.outcome])articles[idx].status=outcomeToStatus[entry.outcome];
   persist();renderHistoryList(articles[idx]);renderTracker();
   closeM('hist-add-modal');
