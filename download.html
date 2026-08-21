@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galley — Download</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f7f5f1;--bg2:#eeeae3;--bg3:#e4dfd6;
+  --ink:#17150f;--ink2:#3d3a32;--ink3:#7a7569;--ink4:#b0a99e;
+  --rule:#d4cfc5;--rule2:#c4beb2;
+  --accent:#2c4a48;--accent-l:#dde8e7;
+  --gold:#8a6d2a;--gold-l:#f2eadb;
+  --serif:'Cormorant Garamond',serif;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Karla',sans-serif;
+}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7;min-height:100vh;display:flex;flex-direction:column;}
+nav{
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:52px;flex-shrink:0;
+}
+.nav-brand{font-family:var(--serif);font-size:20px;font-weight:500;color:#f0ece4;letter-spacing:0.01em;}
+.nav-ref{font-family:var(--mono);font-size:8px;color:rgba(255,255,255,0.3);letter-spacing:0.08em;}
+
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 40px;}
+
+.card{
+  max-width:560px;width:100%;
+  border:1px solid var(--rule);
+  background:var(--bg);
+  padding:48px;
+}
+
+.card-check{
+  width:40px;height:40px;
+  background:var(--accent-l);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:28px;
+}
+
+.card-check svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+
+.card-title{
+  font-family:var(--serif);font-size:32px;font-weight:400;
+  color:var(--ink);margin-bottom:10px;
+}
+
+.card-sub{
+  font-size:14px;color:var(--ink3);margin-bottom:36px;line-height:1.6;
+}
+
+.download-btn{
+  display:block;width:100%;
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--ink);color:#e8e2d8;border:none;padding:16px 28px;
+  cursor:pointer;transition:all 0.15s;text-align:center;
+  text-decoration:none;margin-bottom:28px;
+}
+.download-btn:hover{background:var(--accent);}
+
+.steps{border-top:1px solid var(--rule);padding-top:28px;}
+.steps-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:16px;
+}
+.step{
+  display:flex;gap:14px;margin-bottom:14px;
+  font-size:13px;color:var(--ink2);line-height:1.6;
+}
+.step-n{
+  font-family:var(--mono);font-size:9px;color:var(--ink4);
+  flex-shrink:0;padding-top:2px;letter-spacing:0.06em;
+}
+
+.api-note{
+  margin-top:28px;
+  background:var(--bg2);border-left:3px solid var(--rule2);
+  padding:14px 18px;
+}
+.api-note-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:6px;
+}
+.api-note-text{font-size:12px;color:var(--ink2);line-height:1.7;}
+.api-note-text a{color:var(--accent);text-decoration:none;}
+.api-note-text a:hover{text-decoration:underline;}
+
+footer{
+  border-top:1px solid var(--rule);
+  padding:20px 40px 24px;text-align:center;flex-shrink:0;
+}
+footer span{font-family:var(--mono);font-size:9px;color:var(--ink4);letter-spacing:0.12em;}
+
+@media(max-width:600px){
+  nav{padding:0 20px;}
+  main{padding:40px 20px;}
+  .card{padding:32px 24px;}
+  footer{padding:20px 20px 24px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Galley</span>
+  <span class="nav-ref" id="ref-display"></span>
+</nav>
+
+<main>
+  <div class="card">
+    <div class="card-check">
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    </div>
+    <h1 class="card-title">Payment confirmed.</h1>
+    <p class="card-sub">Thank you for purchasing Galley. Your download is ready below. Save the file somewhere you'll find it — your Desktop or Documents folder works well.</p>
+
+    <a class="download-btn" href="galley.html" download="galley.html">Download Galley</a>
+
+    <div class="steps">
+      <div class="steps-label">Getting started</div>
+      <div class="step">
+        <span class="step-n">01</span>
+        <span>Save <strong>galley.html</strong> to your computer. It is a single file — no installation required.</span>
+      </div>
+      <div class="step">
+        <span class="step-n">02</span>
+        <span>Open it in any browser — Chrome, Brave, Safari, Firefox. Double-click the file or drag it into a browser tab.</span>
+      </div>
+      <div class="step">
+        <span class="step-n">03</span>
+        <span>The submissions tracker, readiness checker, and revision log work immediately. Start adding your articles.</span>
+      </div>
+      <div class="step">
+        <span class="step-n">04</span>
+        <span>To use the style auditor, add your Anthropic API key via the <strong>API key</strong> link in the top bar. See the note below.</span>
+      </div>
+    </div>
+
+    <div class="api-note">
+      <div class="api-note-label">Style auditor — API key required</div>
+      <div class="api-note-text">The style auditor uses the Anthropic API. Get a free key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> — it takes two minutes and costs nothing until you use it. Typical cost per audit is under $0.02. Your key is stored locally in your browser and never shared with anyone.</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>• by Signal &amp; Seed •</span>
+</footer>
+
+<script>
+// Display payment reference if present
+const params = new URLSearchParams(window.location.search);
+const ref = params.get('ref');
+if(ref){
+  document.getElementById('ref-display').textContent = 'Ref: ' + ref;
+}
+</script>
+
+</body>
+</html>

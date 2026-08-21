@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galley — Submission toolkit for academic writers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Karla:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://js.paystack.co/v1/inline.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#f7f5f1;--bg2:#eeeae3;--bg3:#e4dfd6;
+  --ink:#17150f;--ink2:#3d3a32;--ink3:#7a7569;--ink4:#b0a99e;
+  --rule:#d4cfc5;--rule2:#c4beb2;
+  --accent:#2c4a48;--accent-l:#dde8e7;
+  --gold:#8a6d2a;--gold-l:#f2eadb;
+  --serif:'Cormorant Garamond',serif;
+  --mono:'JetBrains Mono',monospace;
+  --sans:'Karla',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-size:15px;line-height:1.7;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--ink);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;height:52px;
+}
+.nav-brand{font-family:var(--serif);font-size:20px;font-weight:500;color:#f0ece4;letter-spacing:0.01em;}
+.nav-buy{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  background:#c8a84e;color:var(--ink);border:none;padding:8px 18px;cursor:pointer;
+  transition:background 0.15s;
+}
+.nav-buy:hover{background:#d4b86a;}
+
+/* HERO */
+.hero{
+  padding:140px 40px 80px;
+  max-width:780px;margin:0 auto;
+}
+.hero-eyebrow{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:24px;
+}
+.hero-title{
+  font-family:var(--serif);font-size:clamp(42px,6vw,72px);font-weight:400;
+  line-height:1.08;letter-spacing:-0.02em;color:var(--ink);margin-bottom:28px;
+}
+.hero-title em{font-style:italic;color:var(--accent);}
+.hero-sub{
+  font-size:17px;color:var(--ink2);line-height:1.75;max-width:560px;margin-bottom:40px;
+}
+.hero-cta{
+  display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.btn-primary{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--ink);color:#e8e2d8;border:none;padding:14px 28px;cursor:pointer;
+  transition:all 0.15s;
+}
+.btn-primary:hover{background:var(--accent);}
+.hero-price{
+  font-family:var(--mono);font-size:11px;color:var(--ink3);letter-spacing:0.06em;
+}
+.hero-price strong{color:var(--ink);font-size:18px;font-family:var(--serif);font-weight:500;}
+
+/* RULE DIVIDER */
+.divider{
+  border:none;border-top:1px solid var(--rule);
+  max-width:780px;margin:0 auto;
+}
+
+/* PULL QUOTE */
+.pull{
+  max-width:780px;margin:60px auto;padding:0 40px;
+}
+.pull-text{
+  font-family:var(--serif);font-size:clamp(22px,3vw,30px);font-weight:400;
+  font-style:italic;line-height:1.45;color:var(--ink2);
+  border-left:3px solid var(--gold);padding-left:28px;
+}
+
+/* MODULES */
+.modules{max-width:780px;margin:0 auto;padding:20px 40px 60px;}
+.modules-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:32px;
+}
+.module{
+  display:grid;grid-template-columns:120px 1fr;gap:0 40px;
+  padding:28px 0;border-top:1px solid var(--rule);
+}
+.module:last-child{border-bottom:1px solid var(--rule);}
+.module-name{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink3);padding-top:4px;
+}
+.module-body h3{
+  font-family:var(--serif);font-size:20px;font-weight:500;
+  color:var(--ink);margin-bottom:10px;line-height:1.2;
+}
+.module-body p{font-size:14px;color:var(--ink2);line-height:1.75;}
+
+/* FEATURES GRID */
+.features{max-width:780px;margin:0 auto;padding:20px 40px 60px;}
+.features-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:28px;
+}
+.features-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;
+  background:var(--rule);border:1px solid var(--rule);
+}
+.feature{
+  background:var(--bg);padding:20px 22px;
+}
+.feature-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:6px;
+}
+.feature-text{font-size:13px;color:var(--ink2);line-height:1.65;}
+
+/* API NOTE */
+.api-note{
+  max-width:780px;margin:0 auto;padding:0 40px 60px;
+}
+.api-note-inner{
+  background:var(--bg2);border-left:3px solid var(--rule2);
+  padding:20px 24px;
+}
+.api-note-label{
+  font-family:var(--mono);font-size:8px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:8px;
+}
+.api-note-text{font-size:13px;color:var(--ink2);line-height:1.75;}
+
+/* BUY SECTION */
+.buy{
+  max-width:780px;margin:0 auto;padding:20px 40px 80px;
+  text-align:center;
+}
+.buy-title{
+  font-family:var(--serif);font-size:36px;font-weight:400;
+  color:var(--ink);margin-bottom:12px;
+}
+.buy-sub{font-size:14px;color:var(--ink3);margin-bottom:32px;line-height:1.6;}
+.buy-price{
+  font-family:var(--serif);font-size:52px;font-weight:400;
+  color:var(--ink);line-height:1;margin-bottom:8px;
+}
+.buy-price-label{
+  font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ink4);margin-bottom:32px;
+}
+.buy-btn{
+  font-family:var(--mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--ink);color:#e8e2d8;border:none;padding:16px 40px;cursor:pointer;
+  transition:all 0.15s;font-size:11px;
+}
+.buy-btn:hover{background:var(--accent);}
+.buy-note{
+  font-family:var(--mono);font-size:9px;color:var(--ink4);
+  margin-top:16px;letter-spacing:0.04em;
+}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--rule);
+  padding:20px 40px 24px;text-align:center;
+}
+footer span{
+  font-family:var(--mono);font-size:9px;color:var(--ink4);letter-spacing:0.12em;
+}
+
+@media(max-width:600px){
+  nav{padding:0 20px;}
+  .hero,.pull,.modules,.features,.api-note,.buy{padding-left:20px;padding-right:20px;}
+  .module{grid-template-columns:1fr;gap:8px 0;}
+  .features-grid{grid-template-columns:1fr;}
+  .hero{padding-top:100px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-brand">Galley</span>
+  <button class="nav-buy" onclick="scrollToBuy()">Buy — R299</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-eyebrow">Academic submission toolkit</div>
+  <h1 class="hero-title">The pipeline,<br><em>under control.</em></h1>
+  <p class="hero-sub">Galley is a browser-based toolkit for academic writers managing active submission pipelines. Track articles and pitches, run pre-submission checklists, log revisions, and audit your prose for AI-tell constructions. One file. No login. No recurring fees.</p>
+  <div class="hero-cta">
+    <button class="btn-primary" onclick="scrollToBuy()">Get Galley</button>
+    <div class="hero-price"><strong>R299</strong> &nbsp;once-off</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<div class="pull">
+  <p class="pull-text">"The dread of not knowing. Not knowing which version you sent. Not knowing how long something has been sitting with an editor. Not knowing, when you open your laptop on a Tuesday morning, whether you have three articles under review or four."</p>
+</div>
+
+<hr class="divider">
+
+<section class="modules">
+  <div class="modules-label">Four modules</div>
+
+  <div class="module">
+    <div class="module-name">01 — Submissions</div>
+    <div class="module-body">
+      <h3>Your full pipeline at a glance</h3>
+      <p>Every article and pitch tracked in one place — journal, publisher, platform, version, dates, status. The status vocabulary covers the full lifecycle: drafted, pitched, under review, R&R, accepted, in production, published, commissioned, rejected. Each article carries a structured submission history recording every journal it has been sent to, with outcome, dates, and notes. Three rejections before acceptance — all visible, nothing lost.</p>
+    </div>
+  </div>
+
+  <div class="module">
+    <div class="module-name">02 — Readiness</div>
+    <div class="module-body">
+      <h3>Pre-submission checklist, per article per style</h3>
+      <p>Select your article, citation style — Chicago, APA, MLA, Harvard, Vancouver — and whether the piece is sole-authored or co-authored. Work through five categories: document preparation, reference formatting, layout, ethics and compliance, and cover letter. The ethics section covers AI use disclosure, data availability, funding declaration, and conflicts of interest. Don't submit until it reads 100%.</p>
+    </div>
+  </div>
+
+  <div class="module">
+    <div class="module-name">03 — Revisions</div>
+    <div class="module-body">
+      <h3>Version history per manuscript</h3>
+      <p>Each article gets a revision log: version number, date, what changed. Over time it becomes a reliable record of how a manuscript developed from first draft to submission — which matters more than you think when you're on v17 and can't remember what changed between v14 and v15.</p>
+    </div>
+  </div>
+
+  <div class="module">
+    <div class="module-name">04 — Style audit</div>
+    <div class="module-body">
+      <h3>AI-tell detection for academic prose</h3>
+      <p>Paste a passage and the auditor analyses it for structural patterns that signal formulaic or artificial writing: triadic padding, manufactured binary contrast, anaphoric stacking, escalating gravity, thesis restatement at close. Each flagged sentence returns with the pattern identified, the exact phrase quoted, a diagnosis, and a fix principle. Use it at the late-draft stage, not the first.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section class="features">
+  <div class="features-label">What else</div>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feature-label">No login required</div>
+      <div class="feature-text">Galley runs entirely in your browser. Your data lives in localStorage — nothing is transmitted, nothing is stored on a server.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">One file</div>
+      <div class="feature-text">A single HTML file. Open it in any browser on any machine. No installation, no dependencies, no updates to manage.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">Export & import</div>
+      <div class="feature-text">Back up your full pipeline as a JSON file. Restore it on any machine. Your records travel with you.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">One price</div>
+      <div class="feature-text">R299, once. No subscription, no recurring charge, no feature tiers. Pay once, use it for as long as you need it.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">Pitches & op-eds</div>
+      <div class="feature-text">Track journal articles and pitches to online platforms in the same pipeline. Aeon, Unherd, and similar outlets with their own response windows and outcome vocabulary.</div>
+    </div>
+    <div class="feature">
+      <div class="feature-label">Built by an academic</div>
+      <div class="feature-text">Galley was built because its author needed it. The submission history, the ethics checklist, the reformatting problem — all of it came from real use.</div>
+    </div>
+  </div>
+</section>
+
+<div class="api-note">
+  <div class="api-note-inner">
+    <div class="api-note-label">A note on the style auditor</div>
+    <div class="api-note-text">The style auditor uses the Anthropic API, which requires a free API key from <strong>console.anthropic.com</strong>. Think of it like website hosting — except it only costs anything when you use it. A heavy week of late-draft revisions might cost twenty cents. A quiet month costs nothing. Setup takes two minutes, and the instructions are inside the app. Everything else in Galley — the tracker, the readiness checker, the revision log — works immediately with no key required.</div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<section class="buy" id="buy">
+  <div class="buy-title">Get Galley</div>
+  <p class="buy-sub">One file. One price. Works the moment you open it.</p>
+  <div class="buy-price">R299</div>
+  <div class="buy-price-label">Once-off · No subscription</div>
+  <button class="buy-btn" onclick="payWithPaystack()">Buy now</button>
+  <div class="buy-note">Secure payment via Paystack · R299 ZAR · Instant download after payment</div>
+</section>
+
+<footer>
+  <span>• by Signal &amp; Seed •</span>
+</footer>
+
+<script>
+function scrollToBuy(){
+  document.getElementById('buy').scrollIntoView({behavior:'smooth'});
+}
+
+function payWithPaystack(){
+  const handler = PaystackPop.setup({
+    key: 'pk_live_0a729b397c7704a5df16d28e46acc81f46c8b741',
+    email: prompt('Please enter your email address to receive your download link:'),
+    amount: 29900, // R299 in cents
+    currency: 'ZAR',
+    ref: 'GALLEY-' + Date.now(),
+    metadata: {
+      custom_fields: [
+        {display_name: 'Product', variable_name: 'product', value: 'Galley v1.0'}
+      ]
+    },
+    callback: function(response){
+      // Payment successful — redirect to download page
+      window.location.href = 'download.html?ref=' + response.reference;
+    },
+    onClose: function(){
+      // User closed without paying — do nothing
+    }
+  });
+  handler.openIframe();
+}
+</script>
+
+</body>
+</html>
